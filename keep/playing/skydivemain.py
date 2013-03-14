@@ -6,6 +6,7 @@ Skydive Demo Randy Hanak
 # Import Modules
 import sys
 sys.path.insert(0, 'dumbmenu')
+sys.path.insert(0, 'score')
 import dumbmenu as dm
 
 import os, pygame
@@ -13,6 +14,8 @@ from pygame.locals import *
 from util import *
 import pyganim
 from skydiversprite import *
+
+from scoredisplayer import ScoreDisplayer
 
 if not pygame.font: print ('Warning, fonts disabled')
 if not pygame.mixer: print ('Warning, sound disabled')
@@ -124,6 +127,18 @@ def main():
         pygame.quit()
         exit()
 
+    # Setup the scoreboard
+    format_ = "0000.00"
+    myfont = pygame.font.Font(pygame.font.match_font('arial'),12)
+    color = 'red'
+
+    sd = ScoreDisplayer(format_, myfont, color) 
+    sd.center = 750,550 
+
+    pygame.time.set_timer(USEREVENT,20)
+
+    score = 0    
+        
     # Create The Backgound
     background, background_rect = load_image('mount_everest.jpg', -1)
     
@@ -170,6 +185,21 @@ def main():
                     whiff_sound.play() #miss
             elif event.type == MOUSEBUTTONUP:
                 fist.unpunch()
+            # Score stuff
+            if event.type == USEREVENT:    
+            	  screen.fill(0,sd)          
+            	  screen.blit(sd.image,sd)   
+            	  pygame.display.update(sd)
+
+            if event.type == KEYDOWN:
+
+                if event.key == K_DOWN:      
+                    score += 183.73
+                    sd.set(score,200)  
+
+                elif event.key == K_ESCAPE:
+                    score = 0
+                    sd.set(score)
         
         allsprites.update()
 
